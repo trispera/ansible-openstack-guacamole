@@ -1,0 +1,25 @@
+---
+- name: Add Ubuntu 22.04 Jammy updates
+  ansible.builtin.apt_repository:
+    repo: deb http://ke.archive.ubuntu.com/ubuntu/ jammy-updates universe
+    state: present
+
+- name: Install tomcat9
+  ansible.builtin.apt:
+    pkg:
+      - tomcat9
+      - tomcat9-admin
+      - tomcat9-common
+      - tomcat9-user
+    update_cache: true
+
+- name: Remove Ubuntu 22.04 Jammy updates
+  ansible.builtin.apt_repository:
+    repo: deb http://ke.archive.ubuntu.com/ubuntu/ jammy-updates universe
+    state: absent
+
+- name: Enable and start Tomcat9 service
+  ansible.builtin.systemd_service:
+    name: tomcat9
+    enabled: true
+    state: started

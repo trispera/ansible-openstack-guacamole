@@ -1,0 +1,21 @@
+---
+
+state: present
+instance_name: guacamole
+os_image: Ubuntu-24.04
+flavor: standard.small
+
+internal_ips:
+  - 193.166.85.0/24
+  - 193.166.1.0/24
+  - 193.166.2.0/24
+  - 193.166.80.0/23
+  - 193.166.83.0/23
+  - 195.148.17.0/23
+
+guacamole_version: 1.5.5
+
+## FOR user-mapping.xml file ##
+## More information: https://guacamole.apache.org/doc/gug/configuring-guacamole.html#user-mapping-xml ##
+guacamole_username: guacadmin
+guacamole_password:  # use "echo -n '<your_password>' | openssl md5" to generate a md5 password

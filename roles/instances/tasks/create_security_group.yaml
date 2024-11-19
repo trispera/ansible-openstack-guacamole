@@ -1,0 +1,27 @@
+- name: Create security group
+  openstack.cloud.security_group:
+    state: present
+    name: "{{ instance_name }}-security-group"
+    description: "Security group for {{ instance_name }}"
+
+- name: Add port 22 opening to ips {{ internal_ips }} to rule {{ instance_name }}
+  openstack.cloud.security_group_rule:
+    state: "{{ state }}"
+    security_group: "{{ instance_name }}-security-group"
+    protocol: tcp
+    port_range_min: 22
+    port_range_max: 22
+    remote_ip_prefix: "{{ item }}"
+  with_items:
+    - "{{ internal_ips }}"
+
+- name: Add port 8080 opening to access Guacamole
+  openstack.cloud.security_group_rule:
+    state: "{{ state }}"
+    security_group: "{{ instance_name }}-security-group"
+    protocol: tcp
+    port_range_min: 8080
+    port_range_max: 8080
+    remote_ip_prefix: "{{ item }}"
+  with_items:
+    - "{{ internal_ips }}"

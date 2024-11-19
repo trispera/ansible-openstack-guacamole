@@ -1,0 +1,58 @@
+---
+- name: Wait before connecting to host
+  wait_for_connection:
+    delay: 15
+    timeout: 150
+    
+- name: Install dependencies
+  ansible.builtin.apt:
+    pkg:
+      - build-essential
+      - libcairo2-dev
+      - libjpeg-turbo8-dev
+      - libpng-dev
+      - libtool-bin
+      - uuid-dev
+      - libossp-uuid-dev
+      - libavcodec-dev
+      - libavformat-dev
+      - libavutil-dev
+      - libswscale-dev
+      - freerdp2-dev
+      - libpango1.0-dev
+      - libssh2-1-dev
+      - libvncserver-dev
+      - libtelnet-dev
+      - libwebsockets-dev
+      - libssl-dev
+      - libvorbis-dev
+      - libwebp-dev
+      - libpulse-dev
+    update_cache: true
+
+- name: Get and extract guacamole server
+  ansible.builtin.unarchive:
+    src: https://downloads.apache.org/guacamole/{{ guacamole_version }}/source/guacamole-server-{{ guacamole_version }}.tar.gz
+    dest: /home/ubuntu/
+    remote_src: yes
+
+- name: Run configure script
+  ansible.builtin.shell: |
+    cd guacamole-server-{{ guacamole_version }}
+    CFLAGS=-Wno-error ./configure --with-systemd-dir=/etc/systemd/system/
+
+- name: Run make
+  ansible.builtin.shell: |
+    cd guacamole-server-{{ guacamole_version }}
+    make
+    make install
+
+- name: Create the necessary links
+  ansible.builtin.command:
+    ldconfig
+
+- name: Run guacamole server service
+  ansible.builtin.systemd_service:
+    name: guacd
+    enabled: true
+    state: started

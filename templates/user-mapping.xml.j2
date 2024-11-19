@@ -1,0 +1,27 @@
+<user-mapping>
+    <!-- Per-user authentication and config information -->
+    <!-- A user using md5 to hash the password
+         guacadmin user and its md5 hashed password below is used to
+             login to Guacamole Web UI-->
+    <authorize
+            username="{{ guacamole_username }}"
+            password="{{ guacamole_password }}"
+            encoding="md5">
+
+        <!-- First authorized Remote connection -->
+        <connection name="MyFirstMachine">
+            <protocol>vnc</protocol>
+            <param name="hostname">0.0.0.0</param>
+            <param name="port">5901</param>
+        </connection>
+
+        <!-- Second authorized remote connection -->
+        <connection name="MySecondMachine">
+            <protocol>vnc</protocol>
+            <param name="hostname">0.0.0.0</param>
+            <param name="port">5901</param>
+        </connection>
+        
+        <!-- to continue... -->
+    </authorize>
+</user-mapping>

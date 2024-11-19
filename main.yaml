@@ -1,0 +1,60 @@
+---
+
+- name: Create VMs
+  hosts: localhost
+  vars_prompt:
+    - name: key_name
+      prompt: Key name?
+      private: false
+    - name: network
+      prompt: Network?
+      private: false
+  roles:
+    - instances
+    - openstack_facts
+
+- name: Configure VMs
+  hosts: created_instances
+  gather_facts: false
+  become: true
+  roles:
+    - guacamole-server
+    - apache-tomcat
+    - guacamole-client
+
+- name: Configure Guacamole
+  hosts: created_instances
+  gather_facts: false
+  become: true
+  tasks:
+    - name: Create necessary folders and add GUACAMOLE_HOME
+      ansible.builtin.shell: |
+        mkdir /etc/guacamole/{extensions,lib}
+        echo "GUACAMOLE_HOME=/etc/guacamole" >> /etc/default/tomcat9
+
+    - name: Copy files
+      ansible.builtin.copy:
+        src: guacamole/guacamole.properties
+        dest: /etc/guacamole
+        mode: '0644'
+
+    - name: Link guacamole conf dir to Tomcat servlet dir
+      ansible.builtin.file:
+        src: /etc/guacamole
+        dest: /usr/share/tomcat9/.guacamole
+        state: link
+
+    - name: Copy user-mapping.xml from templates/
+      ansible.builtin.template:
+        src: templates/user-mapping.xml.j2
+        dest: /etc/guacamole/user-mapping.xml
+
+    - name: Restart Tomcat service
+      ansible.builtin.systemd_service:
+        name: tomcat9
+        state: restarted
+    
+    - name: Restart guacd service
+      ansible.builtin.systemd_service:
+        name: guacd
+        state: restarted
