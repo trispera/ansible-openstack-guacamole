@@ -15,7 +15,7 @@ In order to run this code you need to first install some tools into your compute
 1. You need the [openstack.cloud collection](https://docs.ansible.com/ansible/latest/collections/openstack/cloud/index.html). Type this command:
 
 	```sh
-	ansible-galaxy install -r requirements.yml
+	ansible-galaxy install -r requirements.yaml
 	```
 
 1. The latest version of [openstacksdk for Python](https://pypi.org/project/openstacksdk/) is also required:
